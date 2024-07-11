@@ -18,14 +18,15 @@ BASE_PACKAGES = [
 
 DEV_PACKAGES = [
     "cheese", "timeshift", "pinta", "wireshark-qt",
-    "ghex", "yandex-browser", "gufw", "python-pywal",
+    "ghex", "gufw", "python-pywal",
     "bleachbit", "gnome-firmware", "dconf-editor",
     "neovim", "telegram-desktop", "tmux",
     "deluge-gtk", "flameshot", "obsidian", "python-pip", "bpython", "ipython", "cloc",
+    "discord"
 ]
 
 AUR_PACKAGES = [
-    "cava", "i3lock-color", "ptpython"
+    "cava", "i3lock-color", "ptpython", "yandex-browser"
 ]
 
 GNOME_OFFICIAL_TOOLS = [
