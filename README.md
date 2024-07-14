@@ -1,3 +1,10 @@
+<!-- TODO -->
+ - add ~/.yandex folder to git
+ - add keyd delivery to /etc/keyd/default.conf
+ - add and fix github-desctop
+ - add piper
+ - add piper config
+
 <h1 align="center"> :herb: ZProger Build :herb: </h1>
 
 <!-- BADGES -->
