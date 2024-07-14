@@ -123,7 +123,7 @@ micro /etc/mkinitcpio.conf
 
 # и замените на:
 
-# HOOKS=(base udev autodetect modconf kms keyboard keymap consolefont block filesystems encrypt lvm2 fsck)
+# HOOKS=(base udev autodetect modconf kms keyboard keymap consolefont block filesystems lvm2 fsck numlock)
 
 # Запустить процесс пересборки ядра
 mkinitcpio -p linux
