@@ -1,4 +1,6 @@
-
+# todo caps to esc
+capslock
+	escape
 
 # reloads sxhkd configuration:
 super + Escape + r

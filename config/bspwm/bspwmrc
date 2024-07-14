@@ -15,7 +15,7 @@ bspc config focus_follows_pointer true
 # Window borders (Auto-Generate)
 bspc config focused_border_color "#7899FA"
 bspc config normal_border_color "#1f222b"
-bspc config border_width 5
+bspc config border_width 2
 bspc config borderless_monocle true
 
 bspc config active_border_color "#bd93f9"
@@ -26,7 +26,7 @@ xsetroot -cursor_name left_ptr
 
 # gaps
 bspc config gapless_monocle false
-bspc config window_gap 17
+bspc config window_gap 8
 
 # moving floating windows and resize them with mouse, hold alt key
 bspc config pointer_modifier mod4
@@ -49,10 +49,6 @@ xrdb merge ~/.Xresources
 
 # launch notification daemon
 dunst -config $HOME/.config/bspwm/dunstrc &
-
-# launch battery tracker and redshift
-pkill battery-alert; ~/bin/battery-alert &
-pgrep -x redshift > /dev/null || redshift &
 
 # start compositor
 picom --config $HOME/.config/bspwm/picom_configurations/1.conf &
