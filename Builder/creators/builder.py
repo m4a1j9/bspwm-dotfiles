@@ -81,3 +81,4 @@ class SystemConfiguration:
         os.system("cp -r themes ~/.themes")
         os.system("cp xinitrc ~/.xinitrc")
         os.system("cp -r bin/ ~/")
+        os.system("cp etc/keyd/* /etc/keyd/")
