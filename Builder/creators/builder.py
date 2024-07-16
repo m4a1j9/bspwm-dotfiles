@@ -81,4 +81,5 @@ class SystemConfiguration:
         os.system("cp -r themes ~/.themes")
         os.system("cp xinitrc ~/.xinitrc")
         os.system("cp -r bin/ ~/")
-        os.system("cp etc/keyd/* /etc/keyd/")
+        os.system("cp etc/keyd/default.conf /etc/keyd/")
+        os.system("cp etc/keyd/mouse.conf /etc/keyd/")
