@@ -34,15 +34,28 @@ mklabel gpt
 mkpart ESP fat32 1Mib 512Mib
 set 1 boot on
 
+# Раздел для основной системы
 mkpart primary
 # file system (нажимаем ENTER)
 # start: 513Mib
+# end: сколько-то G
+
+# Раздел для бэкапа, указываем примерно то же размер, что и у освной сисетмы
+mkpart primary
+# file system (нажимаем ENTER)
+# start: 513Mib
+# end: до конца, но нужно оставить 8G для swap
+
+# Добавляем swap раздел
+mkpart primary
+# ext4
+# start: 8G
 # end: 100%
 
 quit
 ```
 
-### Шифруем раздел который подготавливался ранее
+### Шифруем раздел который подготавливался ранее (необязательно)
 ```bash
 cryptsetup luksFormat /dev/sda2
 # sda2 – раздел с шифрованием
@@ -76,6 +89,8 @@ mkfs.fat -F 32 /dev/sda1
 
 # Монтируем разделы для установки системы
 mount /dev/mapper/main-root /mnt
+# или
+mount /dev/sdaX /mnt
 mkdir /mnt/boot
 
 # Монтируем раздел с boot в текущую рабочую папку
@@ -176,6 +191,9 @@ micro /etc/X11/xinit/xinitrc
 
 # Отключите любые другие строки exec и добавьте в конец файла строку:
 exec bspwm
+
+# Указывам заголовок для swap
+mkswap /dev/sda4
 ```
 
 Загрузите репозиторий локально, но перед выполнением билдера я рекомендую перейти в `Builder/packages.py` и посмотреть пакеты, которые будут установлены.
