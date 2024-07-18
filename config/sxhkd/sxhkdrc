@@ -1,6 +1,4 @@
-# todo caps to esc
-capslock
-	escape
+
 
 # reloads sxhkd configuration:
 super + Escape + r
@@ -11,8 +9,20 @@ super + Return
     alacritty
 
 # Hide or Unhide Polybar
+#super + p
+#	sh $HOME/bin/toggle-polybar
+
+# Play-pause
 super + p
-	sh $HOME/bin/toggle-polybar
+  playerctl play-pause
+
+# Next track
+super + bracket{left}
+  playerctl next
+
+# Prev track
+super + o
+  playerctl previous
 
 # Set random wallpaper
 super + w
