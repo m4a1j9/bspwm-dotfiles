@@ -15,7 +15,7 @@ TERM = "alacritty"
 
 [font]
 builtin_box_drawing = true
-size = 12.0
+size = 10.0
 
 [font.bold]
 style = "Bold"
@@ -53,8 +53,9 @@ program = "/usr/bin/fish"
 
 [window]
 dynamic_title = true
-opacity = 1
 title = "Alacritty"
+opacity = 0.92
+blure = true
 
 [window.class]
 general = "Alacritty"
