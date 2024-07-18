@@ -252,6 +252,8 @@ curl -sL https://git.io/fisher | source && fisher install jorgebucaran/fisher
 fisher install jorgebucaran/nvm.fish
 # TODO node и npm доступны только после использования
 nvm use версия
+# Получилось использовать yarn установив его напрямую
+suso pacman -S yarn
 
 # Перезагружаем сисему, что бы микрокод применился
 sudo reboot
