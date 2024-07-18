@@ -245,6 +245,12 @@ sudo pacman -S seahorse
 # Активируем демона для keyd
 systemctl enable keyd
 
+# Если нужет nvm, то проделываем следующие шаги:
+# Устонавливаем fisher - пакетный менеджер для fish shell
+curl -sL https://git.io/fisher | source && fisher install jorgebucaran/fisher
+# Далее устанавливаем плагин, для работы bash скриптов в fish
+fisher install jorgebucaran/nvm.fish
+
 # Перезагружаем сисему, что бы микрокод применился
 sudo reboot
 
