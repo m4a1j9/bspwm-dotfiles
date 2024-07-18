@@ -250,6 +250,8 @@ systemctl enable keyd
 curl -sL https://git.io/fisher | source && fisher install jorgebucaran/fisher
 # Далее устанавливаем плагин, для работы bash скриптов в fish
 fisher install jorgebucaran/nvm.fish
+# TODO node и npm доступны только после использования
+nvm use версия
 
 # Перезагружаем сисему, что бы микрокод применился
 sudo reboot
