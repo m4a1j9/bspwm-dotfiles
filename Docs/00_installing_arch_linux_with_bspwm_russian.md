@@ -247,7 +247,7 @@ systemctl enable keyd
 
 # Если нужет nvm, то проделываем следующие шаги:
 # Устонавливаем fisher - пакетный менеджер для fish shell
-curl -sL https://git.io/fisher | source && fisher install jorgebucaran/fisher
+curl -sL https://raw.githubusercontent.com/jorgebucaran/fisher/main/functions/fisher.fish | source && fisher install jorgebucaran/fisher
 # Далее устанавливаем плагин, для работы bash скриптов в fish
 fisher install jorgebucaran/nvm.fish
 # TODO node и npm доступны только после использования
