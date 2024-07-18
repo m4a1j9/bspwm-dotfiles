@@ -151,7 +151,7 @@ cd /boot/loader
 micro loader.conf
 
 # Вставляем в loader.conf следующий конфиг:
-timeout 3
+timeout 5
 default arch
 
 # Создаем конфигурацию для запуска
@@ -160,10 +160,27 @@ micro arch.conf
 
 # Вставляем в arch.conf следующее:
 # UUID можно узнать командой blkid
+# Для удобства можно вставить выввод команды сразу в файл
+# blkid >> arch.conf
 title Arch Linux by ZProger
 linux /vmlinuz-linux
 initrd /initramfs-linux.img
-options rw cryptdevice=UUID=uuid_от_/dev/sda2:main root=/dev/mapper/main-root
+options root=UUID=айди от главной партии (на которой установлена система)
+# Если делали шифрование диска, то в опции нужно прописывать следующиее
+# options rw cryptdevice=UUID=uuid_от_основной_партии root=/dev/mapper/main-root
+
+# Устанавливаем драйвера для cpu.
+# Для amd
+sudo pacman -S amd-ucode
+# Для intel
+sudo pacman -S intel-ucode
+
+# Добавляем автозагрузку микрокода в проц (актуально, только если в качестве boot-loader использовался bootctl (он же systemd-boot))
+sudo nvim /boot/loader/entries/arch.conf
+# Добавляем микрокод
+# initrd  /amd-ucode.img 
+# или 
+# initrd  /intel-ucode.img
 
 # Выдаем права на sudo
 sudo EDITOR=micro visudo
@@ -219,6 +236,12 @@ python3 Builder/install.py
 n ~/.xinitrc
 # Устонавливаем связь переменных окружения с иксами. Можно вставить в любое место.
 # source /etc/X11/xinit/xinitrc.d/50-systemd-user.sh
+
+# Активируем демона для keyd
+systemctl enable keyd
+
+# Перезагружаем сисему, что бы микрокод применился
+sudo reboot
 
 startx
 ```
