@@ -22,7 +22,7 @@ DEV_PACKAGES = [
     "bleachbit", "gnome-firmware", "dconf-editor",
     "neovim", "telegram-desktop", "tmux",
     "deluge-gtk", "flameshot", "obsidian", "python-pip", "bpython", "ipython", "cloc",
-    "discord", "keyd"
+    "discord", "keyd", "playerctl"
 ]
 
 AUR_PACKAGES = [
