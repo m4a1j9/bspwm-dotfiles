@@ -258,6 +258,26 @@ suso pacman -S yarn
 # Устанавливаем браузер по умолчанию при помощи Default applications
 # super + d -> def -> запустить и выбрать в интерфейсе
 
+# Проводим настройку буфер-менеджера
+# Проверям наличие переменной
+echo $XDG_CONFIG_HOME
+# Если вывелась пустая строка, устанавливаем ее вручную
+export XDG_CONFIG_HOME="$HOME/.config"
+# Устанавливаем дефолтные конфиги для самого менеджера
+mkdir -p $XDG_CONFIG_HOME/clipcat
+clipcatd default-config      > $XDG_CONFIG_HOME/clipcat/clipcatd.toml
+clipcatctl default-config    > $XDG_CONFIG_HOME/clipcat/clipcatctl.toml
+clipcat-menu default-config  > $XDG_CONFIG_HOME/clipcat/clipcat-menu.toml
+# Так как испольщуем fish shell, менеджерунужно выдать полномочия
+clipcatd completions fish
+# Добавляем в автозапуск
+n ~/.xinitrc
+# Добавляем в цепочку вызовов, но перед вызовом окнонного мендежера
+# *** &
+# clipcatd &
+# exec bspwm &
+# ***
+
 # Перезагружаем сисему, что бы микрокод применился
 sudo reboot
 
