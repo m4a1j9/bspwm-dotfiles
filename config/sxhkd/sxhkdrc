@@ -69,6 +69,10 @@ XF86MonBrightness{Up,Down}
 Print
     flameshot gui
 
+# Bufer manager
+super + v
+  clipcat-menu
+
 #
 #
 # BSPWM HOTKEYS
@@ -84,8 +88,8 @@ super + c
     bspc node -c
 
 # alternate between the tiled and monocle layout
-super + space
-	bspc node -t "~"{floating,tiled}
+# super + space
+#	bspc node -t "~"{floating,tiled}
 
 
 #
@@ -154,3 +158,4 @@ super + ctrl + {m,x,y,z}
 # swap the current node and the biggest window
 super + g
 	bspc node -s biggest.window
+

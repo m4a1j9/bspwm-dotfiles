@@ -259,10 +259,6 @@ suso pacman -S yarn
 # super + d -> def -> запустить и выбрать в интерфейсе
 
 # Проводим настройку буфер-менеджера
-# Проверям наличие переменной
-echo $XDG_CONFIG_HOME
-# Если вывелась пустая строка, устанавливаем ее вручную
-export XDG_CONFIG_HOME="$HOME/.config"
 # Устанавливаем дефолтные конфиги для самого менеджера
 mkdir -p $XDG_CONFIG_HOME/clipcat
 clipcatd default-config      > $XDG_CONFIG_HOME/clipcat/clipcatd.toml
