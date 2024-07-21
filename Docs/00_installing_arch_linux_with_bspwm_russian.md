@@ -266,13 +266,9 @@ clipcatctl default-config    > $XDG_CONFIG_HOME/clipcat/clipcatctl.toml
 clipcat-menu default-config  > $XDG_CONFIG_HOME/clipcat/clipcat-menu.toml
 # Так как испольщуем fish shell, менеджерунужно выдать полномочия
 clipcatd completions fish
-# Добавляем в автозапуск
-n ~/.xinitrc
-# Добавляем в цепочку вызовов, но перед вызовом окнонного мендежера
-# *** &
-# clipcatd &
-# exec bspwm &
-# ***
+# TODO Автозапуск. Уже пробовал, но не работает:
+# - прокидывать в .xinitrc
+# - добавлять автозапуска через systemctl
 
 # Перезагружаем сисему, что бы микрокод применился
 sudo reboot
