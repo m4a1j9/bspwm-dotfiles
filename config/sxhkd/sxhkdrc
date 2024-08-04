@@ -40,8 +40,8 @@ super + {d,x}
     {rofi -show drun,sh $HOME/bin/powermenu}
 
 # Launch Applications
-super + shift + {f,n,p,t,c,v,i,x,q,k,l}
-	{firefox, \
+super + shift + {y,n,p,t,c,v,i,x,q,k,l}
+	{yandex-browser-stable --remote-debugging-port=9222, \
 	thunar, \
 	pavucontrol, \
 	telegram-desktop, \
