@@ -4,10 +4,10 @@
 killall -q polybar
 
 # Launch bar1 and bar2
-echo "---" | tee -a /tmp/polybar1.log /tmp/polybar2.log
+# echo "---" | tee -a /tmp/polybar1.log /tmp/polybar2.log
+echo "___" >> /tmp/polybar1.log
 
-#polybar example  >>/tmp/polybar1.log 2>&1 &
-polybar top -r >>/tmp/polybar1.log 2>&1 & disown
+~/.config/polybar/scripts/universal_launch.sh 2>> /tmp/polybar1.log
 
-echo "Bars launched..."
+echo "Bars launched..." >> /tmp/polybar1.log
 

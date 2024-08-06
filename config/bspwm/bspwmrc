@@ -7,13 +7,12 @@ pgrep -x sxhkd > /dev/null || sxhkd &
 # wmname LG3D
 
 # workspaces
-bspc monitor primary -d 1 2 3 4 5 6 7
-bspc monitor LVDS-1 -d 7  # TODO: multiple monitors
+~/.config/bspwm/scripts/workspaces.sh 2>> /tmp/bspwm.log 
 
 bspc config focus_follows_pointer true
 
 # Window borders (Auto-Generate)
-bspc config focused_border_color "#7899FA"
+bspc config focused_border_color "#ed3b7d"
 bspc config normal_border_color "#1f222b"
 bspc config border_width 2
 bspc config borderless_monocle true
@@ -45,7 +44,7 @@ xrdb merge ~/.Xresources
 # python script to always initialize with a different wallpaper:
 # TODO: Add loading of basic scripts
 ~/.config/bspwm/scripts/launch.sh &
-~/.config/polybar/launch.sh
+~/.config/polybar/launch.sh &
 
 # launch notification daemon
 dunst -config $HOME/.config/bspwm/dunstrc &
