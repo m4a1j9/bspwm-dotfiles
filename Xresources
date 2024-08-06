@@ -33,9 +33,11 @@ st.borderpx: 10
 #define base0E #c678dd
 #define base0F #be5046
 
+#define background_opacity #aa1e222a
+
 *foreground:   base07
 #ifdef background_opacity
-*background:   [background_opacity]base00
+*background:   background_opacity
 #else
 *background:   base00
 #endif
