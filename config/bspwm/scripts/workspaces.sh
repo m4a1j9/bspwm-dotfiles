@@ -16,6 +16,8 @@ if type "xrandr"; then
     # TODO change the names of monitors !!!
     bspc monitor DVI-D-1 -d 1 2 3 4 5
     bspc monitor HDMI-1 -d 6 7 8 9
+  elif [ "$num_connected" -eq 1 ]; then
+    bspc monitor primary -d 1 2 3 4 5 6 7
   fi
 else
   echo "executin default workspace" >> /tmp/bspwm.log
