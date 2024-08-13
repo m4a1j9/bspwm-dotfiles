@@ -13,13 +13,6 @@ station устройство connect SSID
 ping google.com
 ```
 
-### Установка крупного шрифта (необязательно)
-```bash
-pacman -S terminus-font
-cd /usr/share/kbd/consolefonts
-setfont ter-u32b.psf.gz
-```
-
 ### Разметка диска под UEFI GPT с шифрованием
 Если вы используете SSD, тогда ваши разделы будут выглядеть примерно так:
 - `/dev/nvme0n1p1`
@@ -31,69 +24,43 @@ setfont ter-u32b.psf.gz
 ```bash
 parted /dev/sda
 mklabel gpt
-mkpart ESP fat32 1Mib 512Mib
+mkpart ESP fat32 1M 1024M
 set 1 boot on
 
 # Раздел для основной системы
-mkpart primary
-# file system (нажимаем ENTER)
-# start: 513Mib
-# end: сколько-то G
+mkpart main
+# file system: ENTER
+# start: конец предыдущего раздела
+# end: половина диска - 8G
 
 # Раздел для бэкапа, указываем примерно то же размер, что и у освной сисетмы
-mkpart primary
-# file system (нажимаем ENTER)
-# start: 513Mib
+mkpart backup
+# file system: ENTER
+# start: конец предыдущего раздела
 # end: до конца, но нужно оставить 8G для swap
 
 # Добавляем swap раздел
-mkpart primary
-# ext4
-# start: 8G
-# end: 100%
+mkpart swap
+# file system: ENTER
+# start: конец предыдущего раздела
+# end: 100% или конец предыдущего раздела + 8G
 
 quit
 ```
 
-### Шифруем раздел который подготавливался ранее (необязательно)
-```bash
-cryptsetup luksFormat /dev/sda2
-# sda2 – раздел с шифрованием
-# вводим YES большими буквами
-# вводим пароль 2 раза
-
-# Открываем зашифрованный раздел
-cryptsetup open /dev/sda2 luks
-
-# Проверяем разделы
-ls /dev/mapper/*
-
-# Создаем логические разделы внутри зашифрованного раздела
-pvcreate /dev/mapper/luks
-vgcreate main /dev/mapper/luks
-
-# 100% зашифрованного раздела помещаем в логический раздел root
-lvcreate -l 100%FREE main -n root
-
-# Посмотреть все логические разделы
-lvs
-```
-
 ### Подготовка разделов и монтирование
 ```bash
-# Форматируем раздел под ext4
-mkfs.ext4 /dev/mapper/main-root
-
 # Форматируем boot раздел под Fat32, на физ.разделе /dev/sda1 лежит boot
 mkfs.fat -F 32 /dev/sda1
 
-# Монтируем разделы для установки системы
-mount /dev/mapper/main-root /mnt
-# или
-mount /dev/sdaX /mnt
-mkdir /mnt/boot
+# Форматируем main, backup и swap под ext4
+mkfs.ext4 /dev/sda2
+mkfs.ext4 /dev/sda3
+mkfs.ext4 /dev/sda4
 
-# Монтируем раздел с boot в текущую рабочую папку
+# Монтируем разделы для установки системы
+mount /dev/sda2 /mnt
+mkdir /mnt/boot
 mount /dev/sda1 /mnt/boot
 ```
 
@@ -101,7 +68,7 @@ mount /dev/sda1 /mnt/boot
 ```bash
 # Устанавливаем базовые софты
 pacstrap -K /mnt base linux linux-firmware base-devel lvm2
-dhcpcd net-tools iproute2 networkmanager vim micro efibootmgr iwd
+net-tools iproute2 networkmanager vim micro efibootmgr iwd
 
 # Генерируем fstab
 genfstab -U /mnt >> /mnt/etc/fstab
@@ -129,7 +96,8 @@ passwd
 # Добавляем нового пользователя и настраиваем права
 useradd -m -G wheel,users -s /bin/bash user
 passwd user
-systemctl enable dhcpcd
+
+# Если планируется использовать wifi, то добавляем автозагрузку iwd
 systemctl enable iwd.service
 
 micro /etc/mkinitcpio.conf
@@ -138,7 +106,7 @@ micro /etc/mkinitcpio.conf
 
 # и замените на:
 
-# HOOKS=(base udev autodetect modconf kms keyboard keymap consolefont block filesystems lvm2 fsck numlock)
+# HOOKS=(base udev autodetect microcode modconf kms keyboard keymap consolefont block filesystems lvm2 fsck)
 
 # Запустить процесс пересборки ядра
 mkinitcpio -p linux
@@ -150,8 +118,7 @@ bootctl install --path=/boot
 cd /boot/loader
 micro loader.conf
 
-# Вставляем в loader.conf следующий конфиг:
-timeout 5
+# Раскоментируем дефолтный конфиг и добавим:
 default arch
 
 # Создаем конфигурацию для запуска
@@ -166,8 +133,6 @@ title Arch Linux by ZProger
 linux /vmlinuz-linux
 initrd /initramfs-linux.img
 options root=UUID=айди от главной партии (на которой установлена система)
-# Если делали шифрование диска, то в опции нужно прописывать следующиее
-# options rw cryptdevice=UUID=uuid_от_основной_партии root=/dev/mapper/main-root
 
 # Устанавливаем драйвера для cpu.
 # Для amd
@@ -222,6 +187,10 @@ sudo pacman -S gnome-keyring
 
 и выполните сборку оболочки используя данные команды:
 ```bash
+mkdir w
+mkdir pw
+mkdir pr
+cd pw
 git clone https://github.com/Zproger/bspwm-dotfiles.git
 cd bspwm-dotfiles
 python3 Builder/install.py
@@ -234,15 +203,16 @@ python3 Builder/install.py
 ```bash
 # Если до этого установлили keyring, то дополнительно кофигурирем .xinitrc
 n ~/.xinitrc
-# Устонавливаем связь переменных окружения с иксами. Можно вставить в любое место.
+# Устонавливаем связь переменных окружения с иксами. Вставляем в начало.
 # source /etc/X11/xinit/xinitrc.d/50-systemd-user.sh
 
-# Вместе с keyring ставим GUI для более простогоупраления ключами
+# Вместе с keyring ставим GUI для более простого упраления ключами
 sudo pacman -S seahorse
 # Запускаем и создаем новый пароль, в название можно указать auto-unlocker. Сам пароль оставляем пустым.
 # Если хочется болшей безопасности, пароль можно все-таки ввести
 
-# Активируем демона для keyd
+# Копируем конфиги и активируем демона для keyd
+sudo cp ~/pw/bspwm-dotfiles/etc/keyd/* /etc/keyd/
 systemctl enable keyd
 
 # Если нужет nvm, то проделываем следующие шаги:
@@ -252,13 +222,13 @@ curl -sL https://raw.githubusercontent.com/jorgebucaran/fisher/main/functions/fi
 fisher install jorgebucaran/nvm.fish
 # TODO node и npm доступны только после использования
 nvm use версия
-# Получилось использовать yarn установив его напрямую
+# Получилось использовать yarn установив его напрямую, но все еще есть баг с переключением версий и установкой пакетов глобально
 suso pacman -S yarn
 
 # Устанавливаем браузер по умолчанию при помощи Default applications
-# super + d -> def -> запустить и выбрать в интерфейсе
+# super + d -> def -> запустить и выбрать в интерфейсе, или вручную указать бинарник.
 
-# Проводим настройку буфер-менеджера
+# Проводим настройку буфер-менеджера clipcat.
 # Устанавливаем дефолтные конфиги для самого менеджера
 mkdir -p $XDG_CONFIG_HOME/clipcat
 clipcatd default-config      > $XDG_CONFIG_HOME/clipcat/clipcatd.toml
@@ -266,11 +236,19 @@ clipcatctl default-config    > $XDG_CONFIG_HOME/clipcat/clipcatctl.toml
 clipcat-menu default-config  > $XDG_CONFIG_HOME/clipcat/clipcat-menu.toml
 # Так как испольщуем fish shell, менеджерунужно выдать полномочия
 clipcatd completions fish
-# TODO Автозапуск. Уже пробовал, но не работает:
-# - прокидывать в .xinitrc
-# - добавлять автозапуска через systemctl
+# Добавляем автозапуск
+micro ~/.xinitrc
+# Перед запуском оконного менеджера запускам демона
+clipcatd
 
-# Перезагружаем сисему, что бы микрокод применился
+# Если используется несколько мониторов, устанавливаем arandr
+sudo pacman -S arandr
+# Запускам и настраиваем монитроы, сохраняем конфиг и добавляем автозапуск:
+micro ~/.xinitrc
+# exec ~/.screenlayout/название.sh &
+# Установленный порядок пригодится для конфигурации bspwm (см скрипт workspaces.sh в конфиге bspwm)
+
+# Перезагружаем сисему
 sudo reboot
 
 startx
