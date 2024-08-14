@@ -220,8 +220,8 @@ systemctl enable keyd
 curl -sL https://raw.githubusercontent.com/jorgebucaran/fisher/main/functions/fisher.fish | source && fisher install jorgebucaran/fisher
 # Далее устанавливаем плагин, для работы bash скриптов в fish
 fisher install jorgebucaran/nvm.fish
-# TODO node и npm доступны только после использования
-nvm use версия
+# Устанавливаем постоянную дефолтную версию
+set --universal nvm_default_version 18
 # Получилось использовать yarn установив его напрямую, но все еще есть баг с переключением версий и установкой пакетов глобально
 suso pacman -S yarn
 
