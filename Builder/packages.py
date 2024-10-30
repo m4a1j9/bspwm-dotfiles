@@ -34,7 +34,9 @@ DEV_PACKAGES = [
     # Package manager for lua 
     "luarocks",
     # find util, needed for telescope nvim plugin
-    "fd"
+    "fd",
+    # advansed manual
+    "tldr"
 ]
 
 AUR_PACKAGES = [

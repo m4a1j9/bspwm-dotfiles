@@ -1,9 +1,9 @@
 Данный файл содержит последовательность команд, которая нужна для полной установки системы Arch Linux.
-Он также включает в себя использование билдера из репозитория, который автоматически разворачивает BSPWM окружение.
+Он также включает в себя использование билдера из репозитория, который полу-автоматически разворачивает BSPWM окружение.
 
 Здесь хранятся самые актуальные команды. Для простоты понимания рекомендую посмотреть это [видео](https://youtu.be/9zewiGf7j-A), сравнивая с инструкцией (но предпочтение к командам отдавайте в первую очередь этому файлу).
 
-### Подключаемся к WiFi (необязательно)
+### Подключаемся к WiFi (если используете повод, то можно пропустить)
 ```bash
 iwctl
 device list
@@ -13,7 +13,7 @@ station устройство connect SSID
 ping google.com
 ```
 
-### Разметка диска под UEFI GPT с шифрованием
+### Разметка диска под UEFI GPT 
 Если вы используете SSD, тогда ваши разделы будут выглядеть примерно так:
 - `/dev/nvme0n1p1`
 - `/dev/nvme0n1p2`
@@ -22,9 +22,17 @@ ping google.com
 А разделы `/dev/sda1` и `/dev/sda2` на `/dev/nvme0n1p1` и `/dev/nvme0n1p2`.
 
 ```bash
-parted /dev/sda
+# Выводим список дисков, что бы узнаь название нужного нам
+fdisk -l
+
+parted *название диска* # нпример, /dev/sda
 mklabel gpt
-mkpart ESP fat32 1M 1024M
+
+# Раздел для boot-loader
+mkpart ESP
+# file system: ENTER
+# start: 1M
+# end: 1024M
 set 1 boot on
 
 # Раздел для основной системы
@@ -67,14 +75,13 @@ mount /dev/sda1 /mnt/boot
 ### Сборка ядра и базовых софтов
 ```bash
 # Устанавливаем базовые софты
-pacstrap -K /mnt base linux linux-firmware base-devel lvm2
-net-tools iproute2 networkmanager vim micro efibootmgr iwd
+pacstrap -K /mnt base linux linux-firmware base-devel lvm2 net-tools iproute2 networkmanager vim micro efibootmgr iwd
 
 # Генерируем fstab
 genfstab -U /mnt >> /mnt/etc/fstab
 cat /mnt/etc/fstab
 
-# Настройка системы
+### Настройка внутренней системы
 arch-chroot /mnt
 
 # Нужно раскомментировать ru_RU и en_US в этом файле
@@ -112,7 +119,7 @@ micro /etc/mkinitcpio.conf
 mkinitcpio -p linux
 ```
 
-### Установка загрузчика
+### Установка загрузчика (все еще в контексте /mnt)
 ```bash
 bootctl install --path=/boot
 cd /boot/loader
@@ -187,11 +194,12 @@ sudo pacman -S gnome-keyring
 
 и выполните сборку оболочки используя данные команды:
 ```bash
+# Опциональны дирректории. Можете указать свои названия или не создавать их вовсе.
 mkdir w
 mkdir pw
 mkdir pr
 cd pw
-git clone https://github.com/Zproger/bspwm-dotfiles.git
+git clone https://github.com/m4a1j9/bspwm-dotfiles.git
 cd bspwm-dotfiles
 python3 Builder/install.py
 ```
@@ -199,7 +207,12 @@ python3 Builder/install.py
 В меню необходимо предоставить разрешение на установку `dotfiles`, обновление баз, установку `BASE_PACKAGES`. Остальные пункты выбирайте самостоятельно.
 Такое разделение опций позволяет выполнить только необходимое действие, к примеру лишь заменить `dotfiles` либо установить актуальные `DEV_PACKAGES` пакеты.
 
-Если вы все сделали правильно, то после запуска вы получите готовую оболочку BSPWM.
+Если вы все сделали правильно, то после запуска вы получите готовую оболочку BSPWM. После зтого перезапускаем систему и проводим постнастройку.
+
+### Постнастройка
+Следующие пункты описывают конфигурацию дополнительного ПО. Каждый из них опционален  
+
+#### keyring
 ```bash
 # Если до этого установлили keyring, то дополнительно кофигурирем .xinitrc
 n ~/.xinitrc
@@ -210,11 +223,17 @@ n ~/.xinitrc
 sudo pacman -S seahorse
 # Запускаем и создаем новый пароль, в название можно указать auto-unlocker. Сам пароль оставляем пустым.
 # Если хочется болшей безопасности, пароль можно все-таки ввести
+```
 
+#### keyd
+```bash
 # Копируем конфиги и активируем демона для keyd
 sudo cp ~/pw/bspwm-dotfiles/etc/keyd/* /etc/keyd/
 systemctl enable keyd
+```
 
+#### nvm
+```bash
 # Если нужет nvm, то проделываем следующие шаги:
 # Устонавливаем fisher - пакетный менеджер для fish shell
 curl -sL https://raw.githubusercontent.com/jorgebucaran/fisher/main/functions/fisher.fish | source && fisher install jorgebucaran/fisher
@@ -224,10 +243,16 @@ fisher install jorgebucaran/nvm.fish
 set --universal nvm_default_version 18
 # Получилось использовать yarn установив его напрямую, но все еще есть баг с переключением версий и установкой пакетов глобально
 suso pacman -S yarn
+```
 
+#### Браузер по умолчанию
+```bash
 # Устанавливаем браузер по умолчанию при помощи Default applications
 # super + d -> def -> запустить и выбрать в интерфейсе, или вручную указать бинарник.
+```
 
+#### clipcat
+```bash
 # Проводим настройку буфер-менеджера clipcat.
 # Устанавливаем дефолтные конфиги для самого менеджера
 mkdir -p $XDG_CONFIG_HOME/clipcat
@@ -240,14 +265,20 @@ clipcatd completions fish
 micro ~/.xinitrc
 # Перед запуском оконного менеджера запускам демона
 clipcatd
+```
 
+#### Настройка мониторов
+```bash
 # Если используется несколько мониторов, устанавливаем arandr
 sudo pacman -S arandr
 # Запускам и настраиваем монитроы, сохраняем конфиг и добавляем автозапуск:
 micro ~/.xinitrc
 # exec ~/.screenlayout/название.sh &
 # Установленный порядок пригодится для конфигурации bspwm (см скрипт workspaces.sh в конфиге bspwm)
+```
 
+#### Все готово
+```bash
 # Перезагружаем сисему
 sudo reboot
 

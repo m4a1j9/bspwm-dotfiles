@@ -82,5 +82,5 @@ class SystemConfiguration:
         os.system("cp xinitrc ~/.xinitrc")
         os.system("cp env ~/.env")
         os.system("cp -r bin/ ~/")
-        os.system("sudo cp etc/keyd/default.conf /etc/keyd/")
-        os.system("sudo cp etc/keyd/mouse.conf /etc/keyd/")
+        os.system("cp ./etc/keyd/default.conf /etc/keyd/")
+        os.system("cp ./etc/keyd/mouse.conf /etc/keyd/")
